@@ -3,12 +3,10 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
   - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='http://data.nhm.ac.uk'>The Data Portal</a>
   - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -19,80 +17,74 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the Data Portal API docs!
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+The Natural History Museum in London, UK shares a wealth of its research data via the [Data Portal](http://data.nhm.ac.uk) website. The API provides a RESTful interface to this information.
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Please feel free to [contact us](http://data.nhm.ac.uk/contact) if you have any questions!
 
-# Authentication
+# Basics
 
-> To authorize, use this code:
+## Access
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+> We do not currently have any packages providing an easy syntax for accessing the API; access is just via URLs.
 
 ```python
-import kittn
+import requests
 
-api = kittn.authorize('meowmeowmeow')
+base_url = 'http://data.nhm.ac.uk/api/3'
 ```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+The base URL for the API is `http://data.nhm.ac.uk/api/3`.
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+Use of the Data Portal API does not currently require a key or any kind of authentication.
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+Please use common sense when using the API, and cache results wherever possible. We reserve the right to suspend API access if you continuously make multiple calls per second.
 </aside>
 
-# Kittens
+## Results
 
-## Get All Kittens
+> A basic successful result looks like this:
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+```json
+{
+  "help": "A description of the action.",
+  "success": true,
+  "result": ["item1", "item2"]
+}
 ```
 
-```python
-import kittn
+> An unsuccessful result looks like this:
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
+```json
+{
+  "help": "A description of the action.",
+  "success": false,
+  "error": {
+    "message": "This is what you did wrong.",
+    "__type": "ErrorType"
+  }
+}
+```
+
+Results are returned in JSON format, with two basic keys: `help` (which describes the action called) and `success` (a boolean indicating whether the request was successful or not).
+
+If the request was successful, the items will be returned under the `result` key.
+
+If the action was valid but the parameters were not, you will get `success: false` and an error message.
+
+# Datasets
+
+## List datasets
+
+```python
+requests.get(base_url)
 ```
 
 ```shell
 curl "http://example.com/api/kittens"
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
 ```
 
 > The above command returns JSON structured like this:
@@ -116,7 +108,7 @@ let kittens = api.kittens.get();
 ]
 ```
 
-This endpoint retrieves all kittens.
+Datasets are sometimes also referred to as _packages_.
 
 ### HTTP Request
 
@@ -135,13 +127,6 @@ Remember — a happy kitten is an authenticated kitten!
 
 ## Get a Specific Kitten
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
 ```python
 import kittn
 
@@ -152,13 +137,6 @@ api.kittens.get(2)
 ```shell
 curl "http://example.com/api/kittens/2"
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
 ```
 
 > The above command returns JSON structured like this:
@@ -189,13 +167,6 @@ ID | The ID of the kitten to retrieve
 
 ## Delete a Specific Kitten
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
 ```python
 import kittn
 
@@ -207,13 +178,6 @@ api.kittens.delete(2)
 curl "http://example.com/api/kittens/2"
   -X DELETE
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
 ```
 
 > The above command returns JSON structured like this:
@@ -236,4 +200,3 @@ This endpoint deletes a specific kitten.
 Parameter | Description
 --------- | -----------
 ID | The ID of the kitten to delete
-
