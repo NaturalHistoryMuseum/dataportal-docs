@@ -20,6 +20,8 @@ The Natural History Museum in London, UK shares a wealth of its research data vi
 
 Please feel free to [contact us](http://data.nhm.ac.uk/contact) if you have any questions!
 
+Or you can reach us on the Data Portal [Gitter](https://gitter.im/nhm-data-portal/Lobby).
+
 # Basics
 
 ## Access
