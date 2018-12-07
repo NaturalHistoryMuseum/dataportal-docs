@@ -181,7 +181,7 @@ curl -X POST \
   "http://data.nhm.ac.uk/api/3/action/datastore_search"
 ```
 
-> _Getting specimens which match the free text search "banana" and have the Botany collection code_
+> _Getting specimens which match the free text search "banana", have the Botany collection code and then sorting them on genus_
 
 ```python
 params = {
@@ -189,7 +189,8 @@ params = {
   'q': 'banana',
   'filters': {
     'collectionCode': 'bot'
-  }
+  },
+  'sort': ['genus desc']
 }
 requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
 ```
