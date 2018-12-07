@@ -389,7 +389,7 @@ Both <code>GET</code> and <code>POST</code> requests are supported, but it is re
 <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}}"</span> <span class="se">\</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}, 'sort': ['genus desc']}"</span> <span class="se">\</span>
   <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
 </code></pre><h4 id='resource_id-required'><code>resource_id</code> (required)</h4>
 <p>The ID of the resource to search</p>
