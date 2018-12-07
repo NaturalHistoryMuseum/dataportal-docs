@@ -109,6 +109,97 @@ Both `GET` and `POST` requests are supported, but it is recommended that you use
 
 ### Query Parameters
 
+> _Getting all specimen data_
+
+```python
+requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search',
+              json={'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'})
+```
+
+```shell
+curl -X POST \
+  --header "Content-Type: application/json" \
+  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'}" \
+  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+```
+
+> _Getting specimens which match the free text search "banana"_
+
+```python
+params = {
+  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
+  'q': 'banana'
+}
+requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+```
+
+```shell
+curl -X POST \
+  --header "Content-Type: application/json" \
+  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana'}" \
+  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+```
+
+> _Getting just specimens from Mexico_
+
+```python
+params = {
+  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
+  'filters': {
+    'country': 'Mexico'
+  }
+}
+requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+```
+
+```shell
+curl -X POST \
+  --header "Content-Type: application/json" \
+  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}}" \
+  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+```
+
+> _Getting more specimen results from Mexico_
+
+```python
+params = {
+  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
+  'filters': {
+    'country': 'Mexico'
+  },
+  'offset': 100
+}
+requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+```
+
+```shell
+curl -X POST \
+  --header "Content-Type: application/json" \
+  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}, 'offset': 100}" \
+  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+```
+
+> _Getting specimens which match the free text search "banana" and have the Botany collection code_
+
+```python
+params = {
+  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
+  'q': 'banana',
+  'filters': {
+    'collectionCode': 'bot'
+  }
+}
+requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+```
+
+```shell
+curl -X POST \
+  --header "Content-Type: application/json" \
+  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}}" \
+  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+```
+
+
 #### `resource_id` (required)
 The ID of the resource to search
 
@@ -227,105 +318,3 @@ The backend that provided the search results - this can be ignored for general u
 
 #### `resource_id`
 The ID of the resource that was searched - this can be ignore for general use!
-
-
-### Search Examples
-Here are a few examples of how to search the data in the [main specimen resource](http://data.nhm.ac.uk/dataset/56e711e6-c847-4f99-915a-6894bb5c5dea/resource/05ff2255-c38a-40c9-b657-4ccb55ab2feb).
-They all use `POST` requests.
-
-### _Getting all specimen data_
-
-```python
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search',
-              json={'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'})
-```
-
-```shell
-curl -X POST \
-  --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-
-By passing just the `resource_id` we get the first 100 records from the resource.
-
-### _Getting just specimens from Mexico_
-
-```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'filters': {
-    'country': 'Mexico'
-  }
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
-```
-
-```shell
-curl -X POST \
-  --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-Now we've filtered the result to just include records that have "Mexico" listed as their "country".
-
-### _Getting more specimen results from Mexico_
-
-```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'filters': {
-    'country': 'Mexico'
-  },
-  'offset': 100
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
-```
-
-```shell
-curl -X POST \
-  --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}, 'offset': 100}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-Now we've filtered the result to just include records that have "Mexico" listed as their "country" and used pagination to retrieve the next 100 results.
-
-
-### _Getting specimens which match the free text search "banana"_
-
-```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'q': 'banana'
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
-```
-
-```shell
-curl -X POST \
-  --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana'}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-Now we've searched for records which include the phrase "banana" in any field.
-
-### _Getting specimens which match the free text search "banana" and have the Botany collection code_
-
-```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'q': 'banana',
-  'filters': {
-    'collectionCode': 'bot'
-  }
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
-```
-
-```shell
-curl -X POST \
-  --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-Now we've searched for records which include the phrase "banana" in any field _and_ have the collectionCode value "bot".
