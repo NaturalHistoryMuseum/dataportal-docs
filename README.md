@@ -15,4 +15,4 @@ The docs are generated with the help of [Slate](https://github.com/lord/slate) t
 
 ## Data Portal Development Roadmap
 
-The epics that are part of the Data Portal's development current roadmap can be found [in this project](https://github.com/NaturalHistoryMuseum/dataportal-docs/projects/1) or [under this milestone](https://github.com/NaturalHistoryMuseum/dataportal-docs/milestone/1).
+The epics that are part of the Data Portal's current development roadmap can be found [in this project](https://github.com/NaturalHistoryMuseum/dataportal-docs/projects/1) or [under this milestone](https://github.com/NaturalHistoryMuseum/dataportal-docs/milestone/1).
