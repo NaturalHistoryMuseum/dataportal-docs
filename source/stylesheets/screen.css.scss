@@ -61,6 +61,7 @@ html, body {
   background-color: $nav-bg;
   font-size: 13px;
   font-weight: bold;
+  border-right: 2px solid $code-bg;
 
   // language selector for mobile devices
   .lang-selector {
@@ -274,6 +275,7 @@ html, body {
     position: fixed;
     z-index: 50;
     border-bottom: 5px solid $lang-select-active-bg;
+    padding: 5px 0 0;
   }
 }
 
@@ -289,6 +291,8 @@ html, body {
     padding: 0 10px;
     line-height: 30px;
     outline: 0;
+    border-radius: 5px 5px 0 0;
+    margin-left: 5px;
 
     &:active, &:focus {
       background-color: $lang-select-pressed-bg;
@@ -353,7 +357,17 @@ html, body {
     margin-top: 2em;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-    background-color: #fdfdfd;
+    background-color: $subheader-bg;
+    position: relative;
+    &::after {
+    	content: "";
+    	border-top: 2px solid $code-annotation-bg;
+    	position: absolute;
+    	width: 100%;
+    	left: 0;
+    	margin-left: 100%;
+    	bottom: -1px;
+    }
   }
 
   h1:first-child, div:first-child + h1 {
