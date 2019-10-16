@@ -20,13 +20,13 @@ The Natural History Museum in London, UK shares a wealth of its research data vi
 
 Please feel free to [contact us](http://data.nhm.ac.uk/contact) if you have any questions!
 
-Or you can reach us on the Data Portal [Gitter](https://gitter.im/nhm-data-portal/Lobby).
+You can also reach us and discuss issues with other users on the Data Portal [Gitter](https://gitter.im/nhm-data-portal/Lobby).
 
 # Basics
 
 ## Access
 
-> We do not currently have any packages providing an easy syntax for accessing the API; access is just via URLs.
+> We have not yet released any packages providing an easy syntax for accessing the API, so access is just via URLs.
 
 ```python
 import requests
@@ -36,7 +36,9 @@ base_url = 'http://data.nhm.ac.uk/api/3'
 
 The base URL for the API is `http://data.nhm.ac.uk/api/3`.
 
-Use of the Data Portal API does not currently require a key or any kind of authentication.
+Most of the Data Portal API does not currently require any kind of authentication. However, if you want to modify or add datasets via the API, you will need an API key. This can be found on your user page (it's only visible to you when you're logged in):
+
+![](images/api-key.png)
 
 <aside class="notice">
 Please use common sense when using the API, and cache results wherever possible. We reserve the right to suspend API access if you continuously make multiple calls per second.
