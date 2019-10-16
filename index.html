@@ -257,10 +257,10 @@
 
 <p>Please feel free to <a href="http://data.nhm.ac.uk/contact">contact us</a> if you have any questions!</p>
 
-<p>Or you can reach us on the Data Portal <a href="https://gitter.im/nhm-data-portal/Lobby">Gitter</a>.</p>
+<p>You can also reach us and discuss issues with other users on the Data Portal <a href="https://gitter.im/nhm-data-portal/Lobby">Gitter</a>.</p>
 <h1 id='basics'>Basics</h1><h2 id='access'>Access</h2>
 <blockquote>
-<p>We do not currently have any packages providing an easy syntax for accessing the API; access is just via URLs.</p>
+<p>We have not yet released any packages providing an easy syntax for accessing the API, so access is just via URLs.</p>
 </blockquote>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
 
@@ -268,7 +268,9 @@
 </code></pre>
 <p>The base URL for the API is <code>http://data.nhm.ac.uk/api/3</code>.</p>
 
-<p>Use of the Data Portal API does not currently require a key or any kind of authentication.</p>
+<p>Most of the Data Portal API does not currently require any kind of authentication. However, if you want to modify or add datasets via the API, you will need an API key. This can be found on your user page (it&#39;s only visible to you when you&#39;re logged in):</p>
+
+<p><img src="images/api-key.png" alt="Api key" /></p>
 
 <aside class="notice">
 Please use common sense when using the API, and cache results wherever possible. We reserve the right to suspend API access if you continuously make multiple calls per second.
