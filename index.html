@@ -258,13 +258,18 @@
 <p>Please feel free to <a href="http://data.nhm.ac.uk/contact">contact us</a> if you have any questions!</p>
 
 <p>You can also reach us and discuss issues with other users on the Data Portal <a href="https://gitter.im/nhm-data-portal/Lobby">Gitter</a>.</p>
-<h1 id='basics'>Basics</h1><h2 id='access'>Access</h2>
-<blockquote>
-<p>We have not yet released any packages providing an easy syntax for accessing the API, so access is just via URLs.</p>
-</blockquote>
-<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<h1 id='basics'>Basics</h1><h2 id='access'>Access</h2><pre class="highlight python tab-python"><code><span class="c"># install the pyportal library with:</span>
+<span class="c"># pip install nhm-pyportal</span>
 
-<span class="n">base_url</span> <span class="o">=</span> <span class="s">'http://data.nhm.ac.uk/api/3'</span>
+<span class="kn">import</span> <span class="nn">pyportal</span>
+
+<span class="c"># only if auth is needed (usually not)</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s">'your-api-key'</span>
+<span class="c"># otherwise</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c"># create an API class instance</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">pyportal</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
 </code></pre>
 <p>The base URL for the API is <code>http://data.nhm.ac.uk/api/3</code>.</p>
 
@@ -305,96 +310,92 @@ Please use common sense when using the API, and cache results wherever possible.
 <h1 id='datastore'>Datastore</h1>
 <p>The Data Portal contains all kinds of resource files, including CSVs, Darwin Core Archives (DwC-A), PDFs, videos, zips and 3D data.
 For some resource file types, such as CSV, the data in the file is ingested into the Datastore, making it searchable and allowing it to be presented in different views like grids and maps.</p>
-<h2 id='search'>Search</h2>
-<blockquote>
-<p>Using a <code>GET</code> request</p>
-</blockquote>
-<pre class="highlight python tab-python"><code><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">)</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
-</code></pre>
-<blockquote>
-<p>or using a <code>POST</code> request</p>
-</blockquote>
-<pre class="highlight python tab-python"><code><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">)</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+<h2 id='search'>Search</h2><pre class="highlight python tab-python"><code><span class="c"># common resource IDs are included as constants</span>
+<span class="kn">from</span> <span class="nn">pyportal.constants</span> <span class="kn">import</span> <span class="n">resources</span>
+
+<span class="c"># these examples use the specimens dataset</span>
+<span class="n">res_id</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">specimens</span>
+</code></pre><pre class="highlight shell tab-shell"><code><span class="nv">RES_ID</span><span class="o">=</span><span class="s1">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span>
+<span class="nv">URL</span><span class="o">=</span><span class="s1">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span>
 </code></pre>
 <p>This endpoint allows you to search the Datastore.
 Both <code>GET</code> and <code>POST</code> requests are supported, but it is recommended that you use <code>POST</code> requests as this allows you to pass the parameters in JSON rather than in the query string which can get a bit messy.</p>
-<h3 id='url'>URL</h3>
+
 <p><code>GET</code>/<code>POST</code> <code>http://data.nhm.ac.uk/api/3/action/datastore_search</code></p>
+
+<p><code>resource_id</code> is the only required parameter.</p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <blockquote>
 <p><em>Getting all specimen data</em></p>
 </blockquote>
-<pre class="highlight python tab-python"><code><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span>
-              <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s">'resource_id'</span><span class="p">:</span> <span class="s">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span><span class="p">})</span>
+<pre class="highlight python tab-python"><code><span class="n">search</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">res_id</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">search</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'}"</span> <span class="se">\</span>
-  <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': </span><span class="nv">$RES_ID</span><span class="s2">}"</span> <span class="se">\</span>
+  <span class="nv">$URL</span>
 </code></pre>
 <blockquote>
 <p><em>Getting specimens which match the free text search &quot;banana&quot;</em></p>
 </blockquote>
-<pre class="highlight python tab-python"><code><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">'resource_id'</span><span class="p">:</span> <span class="s">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span><span class="p">,</span>
-  <span class="s">'q'</span><span class="p">:</span> <span class="s">'banana'</span>
-<span class="p">}</span>
-<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<pre class="highlight python tab-python"><code><span class="n">search</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s">'banana'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">search</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana'}"</span> <span class="se">\</span>
-  <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': </span><span class="nv">$RES_ID</span><span class="s2">, 'q': 'banana'}"</span> <span class="se">\</span>
+  <span class="nv">$URL</span>
 </code></pre>
 <blockquote>
 <p><em>Getting just specimens from Mexico</em></p>
 </blockquote>
-<pre class="highlight python tab-python"><code><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">'resource_id'</span><span class="p">:</span> <span class="s">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span><span class="p">,</span>
-  <span class="s">'filters'</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s">'country'</span><span class="p">:</span> <span class="s">'Mexico'</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<pre class="highlight python tab-python"><code><span class="n">search</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s">'Mexico'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">search</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}}"</span> <span class="se">\</span>
-  <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': </span><span class="nv">$RES_ID</span><span class="s2">, 'filters': {'country': 'Mexico'}}"</span> <span class="se">\</span>
+  <span class="nv">$URL</span>
 </code></pre>
 <blockquote>
 <p><em>Getting more specimen results from Mexico</em></p>
 </blockquote>
-<pre class="highlight python tab-python"><code><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">'resource_id'</span><span class="p">:</span> <span class="s">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span><span class="p">,</span>
-  <span class="s">'filters'</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s">'country'</span><span class="p">:</span> <span class="s">'Mexico'</span>
-  <span class="p">},</span>
-  <span class="s">'offset'</span><span class="p">:</span> <span class="mi">100</span>
-<span class="p">}</span>
-<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<pre class="highlight python tab-python"><code><span class="c"># the pyportal .all() method already pages</span>
+<span class="c"># through the results without you having to</span>
+<span class="c"># set the offset manually, but you can skip</span>
+<span class="c"># the first n records by setting an offset</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span>
+                     <span class="n">offset</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">country</span><span class="o">=</span><span class="s">'Mexico'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">search</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}, 'offset': 100}"</span> <span class="se">\</span>
-  <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': </span><span class="nv">$RES_ID</span><span class="s2">, 'filters': {'country': 'Mexico'}, 'offset': 100}"</span> <span class="se">\</span>
+  <span class="nv">$URL</span>
 </code></pre>
 <blockquote>
-<p><em>Getting specimens which match the free text search &quot;banana&quot;, have the Botany collection code and then sorting them on genus</em></p>
+<p><em>Getting specimens which match the free text search &quot;banana&quot;, have the Botany collection code and then sorting them on genus (descending order)</em></p>
 </blockquote>
-<pre class="highlight python tab-python"><code><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">'resource_id'</span><span class="p">:</span> <span class="s">'05ff2255-c38a-40c9-b657-4ccb55ab2feb'</span><span class="p">,</span>
-  <span class="s">'q'</span><span class="p">:</span> <span class="s">'banana'</span><span class="p">,</span>
-  <span class="s">'filters'</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s">'collectionCode'</span><span class="p">:</span> <span class="s">'bot'</span>
-  <span class="p">},</span>
-  <span class="s">'sort'</span><span class="p">:</span> <span class="p">[</span><span class="s">'genus desc'</span><span class="p">]</span>
-<span class="p">}</span>
-<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://data.nhm.ac.uk/api/3/action/datastore_search'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<pre class="highlight python tab-python"><code><span class="n">search</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span>
+                     <span class="n">sort</span><span class="o">=</span><span class="p">[</span><span class="s">'genus desc'</span><span class="p">],</span>
+                     <span class="n">query</span><span class="o">=</span><span class="s">'banana'</span><span class="p">,</span>
+                     <span class="n">collectionCode</span><span class="o">=</span><span class="s">'bot'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">search</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl -X POST <span class="se">\</span>
   --header <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
-  --data<span class="o">=</span><span class="s2">"{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}, 'sort': ['genus desc']}"</span> <span class="se">\</span>
-  <span class="s2">"http://data.nhm.ac.uk/api/3/action/datastore_search"</span>
+  --data<span class="o">=</span><span class="s2">"{'resource_id': </span><span class="nv">$RES_ID</span><span class="s2">, 'q': 'banana', 'filters': {'collectionCode': 'bot'}, 'sort': ['genus desc']}"</span> <span class="se">\</span>
+  <span class="nv">$URL</span>
 </code></pre><h4 id='resource_id-required'><code>resource_id</code> (required)</h4>
-<p>The ID of the resource to search</p>
+<p>The ID of the resource to search.</p>
 
 <p><em>Example:</em> <code>05ff2255-c38a-40c9-b657-4ccb55ab2feb</code></p>
 <h4 id='q'><code>q</code></h4>
