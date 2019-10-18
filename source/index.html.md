@@ -26,12 +26,19 @@ You can also reach us and discuss issues with other users on the Data Portal [Gi
 
 ## Access
 
-> We have not yet released any packages providing an easy syntax for accessing the API, so access is just via URLs.
-
 ```python
-import requests
+# install the pyportal library with:
+# pip install nhm-pyportal
 
-base_url = 'http://data.nhm.ac.uk/api/3'
+import pyportal
+
+# only if auth is needed (usually not)
+api_key = 'your-api-key'
+# otherwise
+api_key = None
+
+# create an API class instance
+api = pyportal.API(api_key)
 ```
 
 The base URL for the API is `http://data.nhm.ac.uk/api/3`.
@@ -83,130 +90,121 @@ For some resource file types, such as CSV, the data in the file is ingested into
 
 ## Search
 
-> Using a `GET` request
-
 ```python
-requests.get('http://data.nhm.ac.uk/api/3/action/datastore_search')
+# common resource IDs are included as constants
+from pyportal.constants import resources
+
+# these examples use the specimens dataset
+res_id = resources.specimens
 ```
 
 ```shell
-curl "http://data.nhm.ac.uk/api/3/action/datastore_search"
-```
-
-> or using a `POST` request
-
-```python
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search')
-```
-
-```shell
-curl -X POST "http://data.nhm.ac.uk/api/3/action/datastore_search"
+RES_ID='05ff2255-c38a-40c9-b657-4ccb55ab2feb'
+URL='http://data.nhm.ac.uk/api/3/action/datastore_search'
 ```
 
 This endpoint allows you to search the Datastore.
 Both `GET` and `POST` requests are supported, but it is recommended that you use `POST` requests as this allows you to pass the parameters in JSON rather than in the query string which can get a bit messy.
 
-
-### URL
-
 `GET`/`POST` `http://data.nhm.ac.uk/api/3/action/datastore_search`
+
+`resource_id` is the only required parameter.
 
 ### Query Parameters
 
 > _Getting all specimen data_
 
 ```python
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search',
-              json={'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'})
+search = api.records(res_id)
+
+for record in search.all():
+    print(record)
 ```
 
 ```shell
 curl -X POST \
   --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb'}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+  --data="{'resource_id': $RES_ID}" \
+  $URL
 ```
 
 > _Getting specimens which match the free text search "banana"_
 
 ```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'q': 'banana'
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+search = api.records(res_id, query='banana')
+
+for record in search.all():
+    print(record)
 ```
 
 ```shell
 curl -X POST \
   --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana'}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+  --data="{'resource_id': $RES_ID, 'q': 'banana'}" \
+  $URL
 ```
 
 > _Getting just specimens from Mexico_
 
 ```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'filters': {
-    'country': 'Mexico'
-  }
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+search = api.records(res_id, country='Mexico')
+
+for record in search.all():
+    print(record)
 ```
 
 ```shell
 curl -X POST \
   --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+  --data="{'resource_id': $RES_ID, 'filters': {'country': 'Mexico'}}" \
+  $URL
 ```
 
 > _Getting more specimen results from Mexico_
 
 ```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'filters': {
-    'country': 'Mexico'
-  },
-  'offset': 100
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+# the pyportal .all() method already pages
+# through the results without you having to
+# set the offset manually, but you can skip
+# the first n records by setting an offset
+
+search = api.records(res_id,
+                     offset=100,
+                     country='Mexico')
+
+for record in search.all():
+    print(record)
 ```
 
 ```shell
 curl -X POST \
   --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'filters': {'country': 'Mexico'}, 'offset': 100}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+  --data="{'resource_id': $RES_ID, 'filters': {'country': 'Mexico'}, 'offset': 100}" \
+  $URL
 ```
 
-> _Getting specimens which match the free text search "banana", have the Botany collection code and then sorting them on genus_
+> _Getting specimens which match the free text search "banana", have the Botany collection code and then sorting them on genus (descending order)_
 
 ```python
-params = {
-  'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb',
-  'q': 'banana',
-  'filters': {
-    'collectionCode': 'bot'
-  },
-  'sort': ['genus desc']
-}
-requests.post('http://data.nhm.ac.uk/api/3/action/datastore_search', json=params)
+search = api.records(res_id,
+                     sort=['genus desc'],
+                     query='banana',
+                     collectionCode='bot')
+
+for record in search.all():
+    print(record)
 ```
 
 ```shell
 curl -X POST \
   --header "Content-Type: application/json" \
-  --data="{'resource_id': '05ff2255-c38a-40c9-b657-4ccb55ab2feb', 'q': 'banana', 'filters': {'collectionCode': 'bot'}, 'sort': ['genus desc']}" \
-  "http://data.nhm.ac.uk/api/3/action/datastore_search"
+  --data="{'resource_id': $RES_ID, 'q': 'banana', 'filters': {'collectionCode': 'bot'}, 'sort': ['genus desc']}" \
+  $URL
 ```
 
 
 #### `resource_id` (required)
-The ID of the resource to search
+The ID of the resource to search.
 
 _Example:_ `05ff2255-c38a-40c9-b657-4ccb55ab2feb`
 
